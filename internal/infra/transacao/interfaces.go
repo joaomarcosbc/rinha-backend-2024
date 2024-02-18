@@ -8,6 +8,6 @@ import (
 
 type Repository interface {
 	CriarTransacao(ctx context.Context, transacao *domain.Transacao) (domain.TransacaoResposta, error)
-	ObterSaldo(ctx context.Context, id int) (domain.Cliente, error)
+	ObterLimiteESaldo(ctx context.Context, id int) (domain.Cliente, error)
 	ObterExtrato(ctx context.Context, id int) (domain.ExtratoDto, error)
 }
