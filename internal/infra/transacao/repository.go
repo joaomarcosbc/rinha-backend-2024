@@ -27,6 +27,7 @@ func (r *repository) ObterExtrato(ctx context.Context, id int) (domain.ExtratoDt
 	if err != nil {
 		return domain.ExtratoDto{}, err
 	}
+
 	query := `SELECT valor, tipo, descricao, realizada_em 
 			  FROM extratos 
 			  WHERE cliente_id = $1 
