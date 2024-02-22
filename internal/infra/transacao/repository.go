@@ -2,6 +2,7 @@ package infra
 
 import (
 	"context"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joaomarcosbc/rinha-backend-2024/internal/domain"
@@ -22,7 +23,41 @@ func (r *repository) CriarTransacao(ctx context.Context, transacao *domain.Trans
 }
 
 func (r *repository) ObterExtrato(ctx context.Context, id int) (domain.ExtratoDto, error) {
-	panic("unimplemented")
+	cliente, err := r.ObterLimiteESaldo(ctx, id)
+	if err != nil {
+		return domain.ExtratoDto{}, err
+	}
+	query := `SELECT valor, tipo, descricao, realizada_em 
+			  FROM extratos 
+			  WHERE cliente_id = $1 
+			  ORDER BY realizada_em DESC LIMIT 10`
+
+	rows, err := r.db.Query(ctx, query, id)
+
+	if err != nil {
+		return domain.ExtratoDto{}, err
+	}
+
+	var ultimasTransacoes []domain.TransacaoDto
+
+	for rows.Next() {
+		t := domain.TransacaoDto{}
+		if err = rows.Scan(&t.Valor, &t.Tipo, &t.Descricao, &t.RealizadaEm); err != nil {
+			return domain.ExtratoDto{}, err
+		}
+		ultimasTransacoes = append(ultimasTransacoes, t)
+	}
+
+	extrato := domain.ExtratoDto{
+		Saldo: domain.SaldoClienteDto{
+			Total:       cliente.Saldo,
+			DataExtrato: time.Now(),
+			Limite:      cliente.Limite,
+		},
+		UltimasTransacoes: ultimasTransacoes,
+	}
+
+	return extrato, err
 }
 
 func (r *repository) ObterLimiteESaldo(ctx context.Context, id int) (domain.Cliente, error) {
