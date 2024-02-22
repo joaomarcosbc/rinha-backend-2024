@@ -65,15 +65,10 @@ func (r *repository) ObterLimiteESaldo(ctx context.Context, id int) (domain.Clie
 	query := "SELECT limite, saldo from clientes WHERE id=$1;"
 	row := r.db.QueryRow(ctx, query, id)
 	cliente := domain.Cliente{}
-	var limite, saldo int64
-	err := row.Scan(&limite, &saldo)
 
-	if err != nil {
-		return cliente, err
+	if err := row.Scan(&cliente.Limite, &cliente.Saldo); err != nil {
+		return domain.Cliente{}, err
 	}
 
-	cliente.Limite = limite
-	cliente.Saldo = saldo
-
-	return cliente, err
+	return cliente, nil
 }
