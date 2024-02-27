@@ -29,7 +29,7 @@ func (r *repository) ObterExtrato(ctx context.Context, id int) (domain.ExtratoDt
 	}
 
 	query := `SELECT valor, tipo, descricao, realizada_em 
-			  FROM extratos 
+			  FROM transacoes 
 			  WHERE cliente_id = $1 
 			  ORDER BY realizada_em DESC LIMIT 10`
 

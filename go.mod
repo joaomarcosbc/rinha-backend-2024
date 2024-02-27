@@ -2,7 +2,10 @@ module github.com/joaomarcosbc/rinha-backend-2024
 
 go 1.21.0
 
-require github.com/jackc/pgx/v5 v5.5.3
+require (
+	github.com/go-chi/chi/v5 v5.0.12
+	github.com/jackc/pgx/v5 v5.5.3
+)
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
